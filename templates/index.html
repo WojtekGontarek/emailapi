@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Register</title>
+</head>
+<body>
+    {% if error %}
+        <p style="color: red">{{ error }}</p>
+    {% endif %}
+    <h1>Login</h1>
+    <form action="/login" method="post">
+        <label for="email_log">Email:</label>
+        <input type="text" id="email_log" name="email" required><br>
+        <label for="password_log">Password:</label>
+        <input type="password" id="password_log" name="password" required><br>
+        <button type="submit">Login</button>
+    </form>
+    <hr>
+    <h1>Register</h1>
+    <form action="/register" method="post">
+        <label for="email_reg">Email:</label>
+        <input type="text" id="email_reg" name="email" required><br>
+        <label for="password_reg">Password:</label>
+        <input type="password" id="password_reg" name="password" required><br>
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html>
