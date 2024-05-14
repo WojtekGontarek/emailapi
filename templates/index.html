@@ -3,28 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login/Register</title>
+{#    <link rel="stylesheet" href="style.css">#}
+    <title>Login or Register</title>
+    <style>
+        body {
+            background-color: #3a3a3a;
+            color: white;
+            padding: 20px;
+            font-family: 'Lucida Grande', Arial, sans-serif;
+        }
+        main {
+            display: flex;
+
+        }
+        .panel{
+            width: 50%;
+            height: 400px;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+        }
+        form{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input{
+            height: 20px;
+            width: 250px;
+            padding: 5px;
+            border-radius: 15px;
+        }
+        input[type="submit"]{
+            height: 30px;
+            width: 100px;
+        }
+        #error{
+            color: red;
+            font-size: large;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+
     {% if error %}
-        <p style="color: red">{{ error }}</p>
+        <p id="error">{{ error }}</p>
     {% endif %}
-    <h1>Login</h1>
-    <form action="/login" method="post">
-        <label for="email_log">Email:</label>
-        <input type="text" id="email_log" name="email" required><br>
-        <label for="password_log">Password:</label>
-        <input type="password" id="password_log" name="password" required><br>
-        <button type="submit">Login</button>
-    </form>
-    <hr>
-    <h1>Register</h1>
-    <form action="/register" method="post">
-        <label for="email_reg">Email:</label>
-        <input type="text" id="email_reg" name="email" required><br>
-        <label for="password_reg">Password:</label>
-        <input type="password" id="password_reg" name="password" required><br>
-        <button type="submit">Register</button>
-    </form>
+    <main>
+
+        <section class="panel" id="login_panel">
+            <h1 style="text-align: center">Login</h1>
+            <form action="/login" method="post">
+                <label for="email_log">Email:</label>
+                <input type="text" id="email_log" name="email" required><br>
+                <label for="password_log">Password:</label>
+                <input type="password" id="password_log" name="password" required><br>
+                <input type="submit" value="Login">
+            </form>
+        </section>
+
+        <section class="panel" id="reg_panel">
+            <h1 style="text-align: center">Register</h1>
+            <form action="/register" method="post">
+                <label for="email_reg">Email:</label>
+                <input type="text" id="email_reg" name="email" required><br>
+                <label for="password_reg">Password:</label>
+                <input type="password" id="password_reg" name="password" required><br>
+                <input type="submit" value="Register">
+            </form>
+        </section>
+
+    </main>
+
+
 </body>
 </html>

@@ -1,18 +1,39 @@
-from flask import Flask, render_template, request, session, redirect, url_for, jsonify
+import datetime
+
+from flask import Flask, render_template, request, session, redirect
 import requests
 
 app = Flask(__name__)
+app.secret_key = "kabaczek"
 
-API_URL = "https://reqres.in/api"
-app.secret_key = 'super secret key'
+API_KEY = open("apiKey.txt", "r").read()
 
+API_URL = "https://identitytoolkit.googleapis.com/v1/accounts"
+
+DB_URL = "https://console.firebase.google.com/u/1/project/flaskproject-c9d74/database/flaskproject-c9d74-default-rtdb/data/~2F"
 
 @app.route("/")
 def index():
-    if "token" in session:
-        return redirect("/users")
+    if "user_id" in session:
+        return redirect("/profile")
     else:
         return render_template("index.html")
+
+
+@app.route("/register", methods=["POST"])
+def register():
+    email = request.form["email"]
+    password = request.form["password"]
+
+    payload = {"email": email, "password": password, "returnSecureToken": True}
+    response = requests.post(f"{API_URL}:signUp?key={API_KEY}",
+                             json=payload)
+
+    if response.status_code == 200:
+        session["user_id"] = response.json()["localId"]
+        return redirect("/profile")
+    else:
+        return render_template("index.html", error=response.json()["error"]["message"])
 
 
 @app.route("/login", methods=["POST"])
@@ -22,58 +43,50 @@ def login():
     print(request.form.get("email"))
     password = request.form["password"]
 
-    # Simulate basic authentication
-    payload = {"email": email, "password": password}
+    payload = {"email": email, "password": password, "returnSecureToken": True}
+    response = requests.post(
+        f"{API_URL}:signInWithPassword?key={API_KEY}", json=payload)
 
-    # Send POST request to authenticate user
-    response = requests.post(f"{API_URL}/login", data=payload)
-
-    # Check if authentication is successful
     if response.status_code == 200:
-        session["token"] = response.json()["token"]
-        return redirect("/users")
+        session["user_id"] = response.json()["localId"]
+        print(response.json())
+        return redirect("/profile")
     else:
         return render_template("index.html", error="Invalid email or password")
 
 
-@app.route("/register", methods=["POST"])
-def register():
-    email = request.form["email"]
-    password = request.form["password"]
-
-    # Simulate user registration
-    payload = {"email": email, "password": password}
-
-    # Send POST request to register user
-    response = requests.post(f"{API_URL}/register", data=payload)
-    print(response.json())
-    print(response.status_code)
-    # Check if registration is successful
-    if response.status_code == 200:
-        session["token"] = response.json()["token"]
-        return redirect("/users")
+@app.route("/profile")
+def profile():
+    if "user_id" in session:
+        return render_template("profile.html")
     else:
-        return render_template("index.html", error=response.json().get("error"))
-
-
-@app.route("/users")
-def users():
-    if "token" in session:
-        # Fetch users from ReqRes.in API
-        headers = {"Authorization": f"Bearer {session['token']}"}
-        response = requests.get(f"{API_URL}/users", headers=headers)
-        users = response.json()["data"]
-
-        return render_template("users.html", users=users)
-    else:
-        return redirect(url_for("index"))
+        return redirect("/")
 
 
 @app.route("/logout")
 def logout():
-    # Remove token from session
-    session.pop("token", None)
+    session.pop("user_id", None)
     return redirect("/")
+
+# def get_user_notes(user_id):
+#     db_path = f"notes/{user_id}"
+#     response = requests.get(f"{DB_URL}/{db_path}.json")
+#     if response.status_code == 200:
+#         return response.json() or {}
+#     else:
+#         return {}
+
+# @app.route("/create_note", methods=["POST"])
+# def create_note(user_id, note_title, note_body):
+#     db_path = f"notes/{user_id}"
+#
+#     res = requests.post(f"{DB_URL}/{db_path}.json", json={
+#         'title': note_title,
+#         'body': note_body,
+#         'created_at': str(datetime.datetime.now())
+#     }).json()['name']
+#
+#     return res
 
 
 if __name__ == '__main__':

@@ -1,0 +1,24 @@
+body {
+    background-color: #3a3a3a;
+    color: white;
+    padding: 20px;
+    font-family: 'Lucida Grande', Arial, sans-serif;
+}
+main {
+    display: flex;
+
+}
+.panel{
+    width: 50%;
+    height: 400px;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+}
+form{
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+}
